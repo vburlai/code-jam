@@ -1,19 +1,9 @@
-# code-jam-2018
+# code-jam
 
-# Qualification round
+# 2018
 
-https://codejam.withgoogle.com/2018/challenges/00000000000000cb/dashboard
+See [2018](2018/)
 
-1. Saving The Universe Again
-2. Trouble Sort
-3. Go, Gopher!
-4. Cubic UFO
+# 2019
 
-# Round 1C
-
-https://codejam.withgoogle.com/2018/challenges/0000000000007765/dashboard
-
-1. A Whole New Word
-2. Lollipop Shop
-3. Ant Stack
-
+See [2019](2019/)
