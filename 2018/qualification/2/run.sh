@@ -1,3 +1,3 @@
 #!/bin/sh
 
-node solution.js <input.txt >output.txt
+node solution.js <input.txt | tee output.txt
