@@ -1,87 +1,84 @@
 'use strict';
 
-const reader = require('readline').createInterface({
-    input: process.stdin,
-    output: process.stdout,
-    terminal: false
-});
-
-let state = 'COUNTER';
-let counter = 0;
-let caseNumber = 1;
-const baseX = 10;
-const baseY = 10;
-let field = [];
-let fieldW = 0;
-let fieldH = 0;
-let A = 0;
-
-reader.on('line', line => {
-    switch (state) {
-        case 'COUNTER':
-            counter = parseInt(line, 10);
-            state = 'TASK1';
-            break;
-
-        case 'TASK1':
-            A = parseInt(line, 10);
-            if (A === 10) {
-                resetField(4, 3);
-            } else if (A === 20) {
-                resetField(5, 4);
-            } else if (A === 200) {
-                resetField(20, 10);
-            } else {
-                throw new Error('invalid A');
-            }
-            state = 'TASK2';
-            console.log(solution(A));
-            break;
-        
-        case 'TASK2':
-            const arr = line.split(' ').map(num => parseInt(num, 10));
-            if (arr[0] === -1 && arr[1] === -1) {
-                process.exit(0);
-            } else if (arr[0] === 0 && arr[1] === 0) {
-                state = 'TASK1';
-                if (++caseNumber > counter) {
-                    process.exit(0);
-                }
-            } else {
-                setField(arr[0] - baseX, arr[1] - baseY);
-                console.log(solution(A));
-            }
-            break;
+class Jam {
+    constructor(func) {
+        this.func = func;
+        this.cases = 0;
+        this.caseNumber = 1;
+        this.inTask = false;
+        this.reset = () => { this.input = []; this.iter = null; };
+        this.reset();
+        const { stdin: input, stdout: output } = process;
+        const reader = require('readline').createInterface({ input, output, terminal: false});
+        reader.on('line', this.onLine.bind(this));
     }
-}).on('close', () => process.exit(0));
 
-const resetField = (width, height) => {
-    fieldW = width;
-    fieldH = height;
-    field = Array(width * height).fill(false);
+    onLine(line) {
+        let caseFinished;
+        
+        if (!this.inTask) {
+            this.cases = parseInt(line, 10);
+            this.inTask = true;
+            this.reset();
+            return;
+        }
+
+        if (this.iter) {
+            const { value, done } = this.iter.next(line.split(' '));
+            if (value) console.log(value);
+            caseFinished = done;
+        } else {
+            this.input.push(line.split(' '));
+
+            if (this.input.length === this.func.length) {
+                const res = this.func.apply(null, this.input);
+
+                if (typeof res.next === 'function') {
+                    this.iter = res;
+                    const { value, done } = this.iter.next();
+                    if (value) console.log(value);
+                    caseFinished = done;
+                } else {
+                    console.log(`Case #${ this.caseNumber }: ${ res }`);
+                    caseFinished = true;
+                }
+                
+            }
+        }
+
+        if (caseFinished) {
+            this.caseNumber++;
+            this.reset();
+        }
+
+        if (this.caseNumber > this.cases) {
+            process.exit(0);
+        }
+    }
 }
 
-const getField = (x, y) => field[x * fieldH + y];
-const setField = (x, y) => field[x * fieldH + y] = true;
+new Jam(function* ([ A ]) {
+    const N = A === '200' ? 23 : 3;
+    const cells = Array.from({ length: N }, () => new Set());
+    let limit = 1000;
 
-const solution = (A) => {
-    for (let x = 1; x < fieldW - 1; x++) {
-        for (let y = 1; y < fieldH - 1; y++) {
-            if (hasEmpty(x, y)) {
-                return `${ x + baseX } ${ y + baseY }`;
+    while (cells.some(incomplete) && --limit) {
+        for(let i = 0; i < cells.length; i++) {
+            if (incomplete(cells[i])) {
+                const shot = toXY(i);
+                const response = yield shot;
+                if (response === '-1 -1') {
+                    process.exit(0);
+                }
+                if (response === '0 0') {
+                    return;
+                }
+                cells[i].add(response.join(','));
             }
         }
     }
-    return `${ baseX + 1 } ${ baseY + 1 }`;
-};
+});
 
-const hasEmpty = (x, y) =>
-    !getField(x - 1, y - 1) ||
-    !getField(x - 1, y) ||
-    !getField(x - 1, y + 1) ||
-    !getField(x, y - 1) ||
-    !getField(x, y) ||
-    !getField(x, y + 1) ||
-    !getField(x + 1, y - 1) ||
-    !getField(x + 1, y) ||
-    !getField(x + 1, y + 1);
+const incomplete = c => c.size < 9;
+const toXY = ind => `2 ${ind*3 + 2}`;
+
