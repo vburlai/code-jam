@@ -1,11 +1,11 @@
 'use strict';
 
 class Jam {
-    constructor(func) {
+    constructor(func, dontCountTestCases = false) {
         this.func = func;
-        this.cases = 0;
+        this.cases = 1;
         this.caseNumber = 1;
-        this.inTask = false;
+        this.inTask = dontCountTestCases;
         this.reset = () => { this.input = []; this.iter = null; };
         this.reset();
         const { stdin: input, stdout: output } = process;
@@ -66,3 +66,8 @@ new Jam((line1, line2) => {
 new Jam(function* (initialLine1) {
     const inputLine = yield outputLine;
 });
+
+// interactive solution with custom test case counting
+new Jam(function* (initialLine1) {
+    const inputLine = yield outputLine;
+}, true);
