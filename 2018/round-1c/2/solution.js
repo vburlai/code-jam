@@ -1,66 +1,37 @@
 'use strict';
 
-const reader = require('readline').createInterface({
-    input: process.stdin,
-    output: process.stdout,
-    terminal: false
-});
-
-let state = 'COUNTER';
-let counter = 0;
-let caseNumber = 1;
-let N;
-let counter2;
-let sold;
-let stats;
-
-reader.on('line', line => {
-    switch (state) {
-        case 'COUNTER':
-            counter = parseInt(line, 10);
-            state = 'TASK1';
-            break;
-
-        case 'TASK1':
-            N = parseInt(line, 10);
-            state = 'TASK2';
-            counter2 = 0;
-            stats = (new Array(N)).fill(0);
-            sold = {};
-            break;
-
-        case 'TASK2':
-            const arr = line.split(' ').map(num => parseInt(num, 10));
-            if (arr[0] === -1) {
-                process.exit(0);
-            } 
-            console.log(solution(arr.slice(1)));
-            if (++counter2 === N) {
-                state = 'TASK1';
-                if (++caseNumber > counter) {
-                    process.exit(0);
-                }
-            }
-            break;
-    }
-}).on('close', () => process.exit(0));
-
-const solution = (input) => {
-    let res = -1;
-    input.forEach(el => stats[el]++);
-    input.filter(el => !sold[el]).forEach(el => {
-        if (res === -1) {
-            res = el;
-        };
-
-        if(stats[el] < stats[res]) {
-            res = el;
-        };
+const Jam = (generator, countCases = true) => {
+    let cases = 1, cs = 1, iter = null;
+    const reset = () => { iter = generator(cs); iter.next(); }, { stdin, stdout } = process;
+    const reader = require('readline').createInterface({ input: stdin, output: stdout, terminal: false});
+    reader.on('line', line => {
+        if (countCases) {
+            cases = parseInt(line, 10); countCases = false;
+        } else {
+            const { done } = iter.next(line.split(' '));
+            done && (++cs > cases) && process.exit(0);
+            done && reset();
+        }
     });
-
-    if (res !== -1) {
-        sold[res] = true;
-    }
-
-    return res;
+    reset();
 };
+
+Jam(function* () {
+    const [ N ] = (yield).map(Number);
+    let stats = Array.from({ length: N }, () => 0);
+    let sold = new Set();
+
+    for(let i = 0; i < N; i++) {
+        const [D, ...likes] = (yield).map(Number);
+        if (D === -1) {
+            process.exit(0);
+        }
+        likes.forEach(el => stats[el]++);
+        const options = likes.filter(el => !sold.has(el));
+        const result = options.length ? options.reduce((acc, el) =>
+            stats[el] < stats[acc] ? el : acc
+        ) : -1;
+        sold.add(result);
+        console.log(result);
+    }
+});
