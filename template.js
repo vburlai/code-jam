@@ -18,4 +18,5 @@ const Jam = (generator, countCases = true) => {
 
 Jam(function* (cs) {
     const inputLine = yield;
+    console.log(`Case #${cs}: ${result}`);
 });
