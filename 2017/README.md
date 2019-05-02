@@ -9,3 +9,10 @@ https://code.google.com/codejam/contest/3264486/dashboard
 3. Bathroom Stalls
 4. Fashion Show
 
+# Round 1C
+
+https://code.google.com/codejam/contest/3274486/dashboard
+
+1. Ample Syrup
+2. Parenting Partnering
+3. Core Training
