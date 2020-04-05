@@ -103,6 +103,55 @@ jam(function* () {
                 process.exit(0);
             }
         }
+
+        if (B === 100) {
+            bits = Array.from({ length: B }, () => ' ');
+            let samePair = null, opositePair = null;
+            let count = 0;
+
+            for (let i = 1; i <= 50; i++) {
+                if (bits[i - 1] === ' ') {
+                    console.log(i)
+                    console.log(B - i + 1)
+                    count += 2;
+                    const [[bit1], [bit2]] = [yield, yield];
+                    bits[i - 1] = bit1; bits[B - i] = bit2;
+
+                    if (bit1 === bit2) {
+                        samePair = i;
+                    } else {
+                        opositePair = i;
+                    }
+
+                    if (count % 10 === 0) {
+                        if (samePair === null) {
+                            console.log(1); yield;
+                        } else {
+                            console.log(samePair)
+                            const [bitS] = yield;
+                            if (bitS !== bits[samePair - 1]) {
+                                invertBits();
+                            }
+                        }
+                        if (opositePair === null) {
+                            console.log(1); yield;
+                        } else {
+                            console.log(opositePair)
+                            const [bitO] = yield;
+                            if (bitO !== bits[opositePair - 1]) {
+                                bits.reverse();
+                            }
+                        }
+                        count += 2;
+                    }
+                }
+            }
+            console.log(bits.join(''));
+            const [verdict] = yield;
+            if (verdict === 'N') {
+                process.exit(0);
+            }
+        }
     }
 }, false);
 
