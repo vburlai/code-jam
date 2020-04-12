@@ -8,3 +8,7 @@ https://codingcompetitions.withgoogle.com/codejam/round/000000000019fd27
 2. Nesting Depth
 3. Parenting Partnering Returns
 4. ESAb ATAd
+
+# Round 1A
+
+https://codingcompetitions.withgoogle.com/codejam/round/000000000019fd74
