@@ -19,6 +19,8 @@ const jam = (generator, countCases = true) => {
     reset();
 };
 
+let row2 = [];
+
 jam(function* (cs) {
     const [N] = (yield).map(toInt);
 
@@ -43,6 +45,23 @@ jam(function* (cs) {
                 (v, i) => `${i + 4} 1`
             )
         ]
+    }
+
+    if (N > 501) {
+        let count = 1;
+        let row = 1;
+        result = ['1 1'];
+        while (count < N) {
+            if (N - count >= row) {
+                result.push(`${row + 1} 2`)
+                count += row;
+            }
+            if (count < N) {
+                result.push(`${row + 1} 1`)
+                count++;
+                row++;
+            }
+        }
     }
 
     console.log(`Case #${cs}:`);
