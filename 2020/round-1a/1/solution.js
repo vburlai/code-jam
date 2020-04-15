@@ -24,13 +24,13 @@ jam(function* (cs) {
 
     const prefixes = [''];
     const suffixes = [''];
+    let middle_parts = [];
 
     for (let i = 0; i < N; i++) {
         const [s] = yield;
-        const [pref, suff, ...rest] = s.split('*');
-        if (rest.length) {
-            process.exit(0)
-        }
+        const [pref, ...rest] = s.split('*');
+        const suff = rest.pop()
+        middle_parts = [...middle_parts, ...rest];
         prefixes.push(pref);
         suffixes.push(suff);
     }
@@ -38,7 +38,7 @@ jam(function* (cs) {
     prefixes.sort(byLengthDesc);
     suffixes.sort(byLengthDesc);
 
-    let result = `${prefixes[0]}${suffixes[0]}`;
+    let result = `${prefixes[0]}${middle_parts.join('')}${suffixes[0]}`;
 
     if (invalidPrefixes(prefixes, prefixes[0]) ||
         invalidSuffixes(suffixes, suffixes[0])) {
