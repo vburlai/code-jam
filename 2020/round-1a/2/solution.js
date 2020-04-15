@@ -19,8 +19,6 @@ const jam = (generator, countCases = true) => {
     reset();
 };
 
-let row2 = [];
-
 jam(function* (cs) {
     const [N] = (yield).map(toInt);
 
@@ -47,7 +45,7 @@ jam(function* (cs) {
         ]
     }
 
-    if (N > 501) {
+    if (N > 501 && N <= 1000) {
         let count = 1;
         let row = 1;
         result = ['1 1'];
@@ -64,6 +62,39 @@ jam(function* (cs) {
         }
     }
 
+    if (N > 1000) {
+        const max = 30;
+        let remaining = N - max; // use all 30 rows of 1's on the edge
+        let remainingReverseBits = getBits(remaining, max);
+
+        console.error(remainingReverseBits);
+
+        let left = true;
+        for (let i = 1; i <= max; i++) {
+            if (!remainingReverseBits[i]) {
+                result.push(`${i} ${left ? 1 : i}`);
+            } else {
+                for (let j = 0; j < i; j++) {
+                    result.push(`${i} ${left ? (j + 1) : (i - j)}`);
+                }
+                left = !left;
+            }
+        }
+    }
+
     console.log(`Case #${cs}:`);
     console.log(result.join('\n'));
 });
+
+const getBits = (n, max) => {
+    let res = {};
+    for (let i = max; i >= 1; i--) {
+        const pow = 1 << (i - 1);
+        const sum = pow - 1;
+        if (n > 0 && n >= sum) {
+            res[i] = 1;
+            n -= sum;
+        }
+    }
+    return res;
+}
