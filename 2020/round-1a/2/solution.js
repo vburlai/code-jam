@@ -80,6 +80,10 @@ jam(function* (cs) {
                 left = !left;
             }
         }
+
+        for (let i = 1; i <= remainingReverseBits.leftOver; i++) {
+            result.push(`${i + max} ${left ? 1 : (i + max)}`);
+        }
     }
 
     console.log(`Case #${cs}:`);
@@ -88,7 +92,8 @@ jam(function* (cs) {
 
 const getBits = (n, max) => {
     let res = {};
-    for (let i = max; i >= 1; i--) {
+
+    for (let i = max; i > 1; i--) {
         const pow = 1 << (i - 1);
         const sum = pow - 1;
         if (n > 0 && n >= sum) {
@@ -96,5 +101,7 @@ const getBits = (n, max) => {
             n -= sum;
         }
     }
+
+    res.leftOver = n;
     return res;
 }
