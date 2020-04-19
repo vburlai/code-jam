@@ -20,6 +20,6 @@ const jam = (generator, countCases = true) => {
 };
 
 jam(function* (cs) {
-    const [N] = (yield).map(toInt);
+    const [result] = (yield).map(toInt);
     console.log(`Case #${cs}: ${result}`);
 });
