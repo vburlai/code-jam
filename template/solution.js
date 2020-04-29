@@ -1,6 +1,7 @@
 'use strict';
 
 const toInt = i => parseInt(i, 10);
+const arrFr = (length, gen) => Array.from({ length }, gen);
 const { Console } = require('console');
 const console = new Console({ stdout: process.stdout, stderr: process.stderr });
 const jam = (generator, countCases = true) => {
@@ -21,5 +22,5 @@ const jam = (generator, countCases = true) => {
 
 jam(function* (cs) {
     const [result] = (yield).map(toInt);
-    console.log(`Case #${cs}: ${result}`);
+    console.log(`Case #${cs}: ${arrFr(3, () => result).join(', ')}`);
 });
