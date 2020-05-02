@@ -85,36 +85,39 @@ jam(function* (cs) {
 });
 
 const simple = (D, A) => {
-    const counts = A.reduce((acc, a) => ({ ...acc, [a]: (acc[a] || 0) + 1 }), {});
-    const max = Object.keys(counts).reduce((acc, k) => counts[k] > counts[acc] ? k : acc, Object.keys(counts)[0]);
+    const counts = A.reduce((acc, a) => ({
+        ...acc,
+        [a]: (acc[a] || 0) + 1
+    }), {});
+    const max = Object.values(counts).reduce((a, b) => Math.max(a, b));
     if (D === 2) {
-        if (counts[max] >= 2) {
+        if (max >= 2) {
             return 0;
         }
-        return 1;
     }
 
     if (D === 3) {
-        if (counts[max] >= 3) {
+        if (max >= 3) {
             return 0;
         }
 
-        if (counts[max] === 1) {
-            for (let i of A) {
-                for (let j of A) {
-                    if (j === 2 * i) {
+        for (let p1 of A) {
+            for (let p2 of A) {
+                if (p2 > p1) {
+                    if (p1 == p2 - p1) {
+                        return 1;
+                    }
+
+                    if (counts[p1] === 2) {
+                        return 1;
+                    }
+                    if (counts[p2 - p1] === 2) {
                         return 1;
                     }
                 }
             }
         }
-
-        if (counts[max] === 2) {
-            if (A.length > 2) {
-                return 1;
-            }
-        }
-
-        return 2;
     }
+
+    return D - 1;
 }
